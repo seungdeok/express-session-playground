@@ -1,0 +1,29 @@
+{
+  "name": "express-session-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "nodemon"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nunjucks": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.15.21",
+    "@types/nunjucks": "^3.2.6",
+    "concurrently": "^9.1.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  }
+}
