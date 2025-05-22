@@ -3,11 +3,10 @@ import "express-session";
 declare module "express-session" {
   interface SessionData {
     user?: {
-      id: string;
+      id: number;
       username: string;
       email?: string;
-      createdAt?: Date;
+      createdAt?: string;
     };
-    isAuthenticated?: boolean;
   }
 }
