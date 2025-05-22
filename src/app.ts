@@ -5,6 +5,7 @@ import session from "express-session";
 import sessionFileStore from "session-file-store";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import helmet from "helmet";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
 import { createUser, users } from "./models/User";
 dotenv.config();
@@ -24,8 +25,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "html");
 nunjucks.configure("src/views", {
+  autoescape: true, // xss 공격
   express: app,
-  watch: true,
+  watch: process.env.NODE_ENV === "development",
 });
 
 app.use(
@@ -34,7 +36,7 @@ app.use(
     resave: false, // 세션 데이터 변경 여부와 상관없이 매 요청마다 저장여부를 결정
     saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 저장
     cookie: {
-      httpOnly: true,
+      httpOnly: true, // xss 공격
       secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24, // 24시간
     },
@@ -42,6 +44,16 @@ app.use(
   })
 );
 app.use(cookieParser(process.env.COOKIE_SECRET || "default_secret"));
+app.use(helmet.xssFilter()); // xss 공격
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'self'"],
+      "img-src": ["'self'"],
+    },
+  })
+); // xss 공격
 
 app.get("/", (req: Request, res: Response) => {
   const { user } = req.session;
