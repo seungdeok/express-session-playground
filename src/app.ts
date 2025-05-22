@@ -39,6 +39,9 @@ app.use(
       httpOnly: true, // xss 공격
       secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24, // 24시간
+      // domain: ".example.com", // 도메인 설정(default: 현재 도메인)
+      // path: "/", // 쿠키의 유효 경로 설정(default: "/")
+      sameSite: "strict", // CSRF 공격
     },
     store: new FileStore({ path: "./sessions", retries: 0 }),
   })
