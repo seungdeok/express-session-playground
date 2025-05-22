@@ -1,11 +1,22 @@
 import express, { Express, Request, Response } from "express";
 import nunjucks from "nunjucks";
 import morgan from "morgan";
+import session from "express-session";
+import sessionFileStore from "session-file-store";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app: Express = express();
 const port = 8080;
 
-app.use(morgan("dev"));
+const FileStore = sessionFileStore(session);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined"));
+} else {
+  app.use(morgan("dev"));
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -14,6 +25,17 @@ nunjucks.configure("src/views", {
   express: app,
   watch: true,
 });
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "default_secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {},
+    store: new FileStore({ path: "./sessions" }),
+  })
+);
+app.use(cookieParser(process.env.COOKIE_SECRET || "default_secret"));
 
 app.get("/", (req: Request, res: Response) => {
   res.render("index");
