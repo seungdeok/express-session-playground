@@ -1,7 +1,14 @@
-<form action="/" method="post">
-  <div><label for="email">이메일</label></div>
-  <div><input type="text" name="email" id="email" /></div>
-  <div><label for="password">비밀번호</label></div>
-  <div><input type="password" name="password" id="password" /></div>
-  <div><input type="submit" value="로그인" /></div>
+{% extends "base.html" %} {% block title %}HOME{% endblock %} {% block content
+%}
+
+<h1>Welcome</h1>
+
+<div class="user-info">
+  <h3>{{ user.username }}({{ user.email }})님 안녕하세요</h3>
+</div>
+
+<form action="/logout" method="POST">
+  <button type="submit" class="btn">로그아웃</button>
 </form>
+
+{% endblock %}

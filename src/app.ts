@@ -5,6 +5,7 @@ import session from "express-session";
 import sessionFileStore from "session-file-store";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import { isAuthenticated } from "./middlewares/isAuthenticated";
 dotenv.config();
 
 const app: Express = express();
@@ -38,9 +39,40 @@ app.use(
 app.use(cookieParser(process.env.COOKIE_SECRET || "default_secret"));
 
 app.get("/", (req: Request, res: Response) => {
-  res.render("index");
+  const { user } = req.session;
+
+  if (user) {
+    res.render("index.html", { user });
+    return;
+  }
+
+  res.render("login.html", { error: null });
+});
+
+app.get("/register", isAuthenticated, (req: Request, res: Response) => {
+  res.render("register.html", { error: null, success: null });
+});
+
+app.get("/login", isAuthenticated, (req: Request, res: Response) => {
+  res.render("login.html", { error: null });
+});
+
+app.post("/logout", (req: Request, res: Response) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Session destroy error:", err);
+      return res.status(500).send("로그아웃 처리 중 오류가 발생했습니다.");
+    }
+
+    res.redirect("/");
+  });
+});
+
+app.use((req, res) => {
+  res.status(404).send("페이지를 찾을 수 없습니다.");
 });
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
+  console.log(`🔑 기본 로그인 정보: admin / admin`);
 });
