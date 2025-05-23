@@ -70,7 +70,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/register", isAuthenticated, (req: Request, res: Response) => {
-  res.render("register.html", { error: null, success: null });
+  res.render("register.html", { error: null });
 });
 
 app.post("/register", async (req: Request, res: Response) => {
@@ -97,7 +97,6 @@ app.post("/register", async (req: Request, res: Response) => {
   if (users.find((user) => user.email === email)) {
     return res.render("register.html", {
       error: "이미 존재하는 이메일입니다.",
-      success: null,
     });
   }
 
