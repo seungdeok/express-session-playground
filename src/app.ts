@@ -12,6 +12,7 @@ dotenv.config();
 
 const app: Express = express();
 const port = 8080;
+const SESSION_DURATION = 24 * 60 * 60; // 24시간 (초)
 
 const FileStore = sessionFileStore(session);
 
@@ -38,12 +39,16 @@ app.use(
     cookie: {
       httpOnly: true, // xss 공격
       secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 24, // 24시간
+      maxAge: SESSION_DURATION * 1000, // 24시간
       // domain: ".example.com", // 도메인 설정(default: 현재 도메인)
       // path: "/", // 쿠키의 유효 경로 설정(default: "/")
       sameSite: "strict", // CSRF 공격
     },
-    store: new FileStore({ path: "./sessions", retries: 0 }),
+    store: new FileStore({
+      path: "./sessions",
+      retries: 0,
+      ttl: SESSION_DURATION,
+    }),
   })
 );
 app.use(cookieParser(process.env.COOKIE_SECRET || "default_secret"));
